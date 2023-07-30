@@ -1,0 +1,16 @@
+Profile :-
+    - user    => (onetoone relation)
+    -username
+    -password
+    -email
+    -list of favourites movies
+
+Movie :-
+
+
+favourites movie :-
+    - user
+    - movie
+    - favourite (0,1)
+
+    
