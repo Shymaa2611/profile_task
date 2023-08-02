@@ -1,12 +1,24 @@
 Profile :-
-    - user    => (onetoone relation)
+    -user    => (onetoone relation)
     -username
     -password
     -email
     -list of favourites movies
 
 Movie :-
+    -title
+    -rate 
+    -duration
+    -description
+    -actors
+    -poster
+    -created_at
+    -trailer_link
 
+Genre :-
+     genre_name
+actors:-
+     name
 
 favourites movie :-
     - user
