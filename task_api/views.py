@@ -44,11 +44,12 @@ class movieViewset(viewsets.ModelViewSet):
                 'message': 'Invalid request'
           }
             return Response(json, status=status.HTTP_400_BAD_REQUEST)
-      
+
+class movieViewset_pk(viewsets.ModelViewSet):
+    queryset=Movie.objects.all()
+    serializer_class=movieSerailizers
+    lookup_field='pk'
 class ProfileView(APIView):
     def get(self, request):
-        serializer = ProfileSerializer2(request.user.profile2, context={'email': request.user.email, 'password': request.user.password})
+        serializer = ProfileSerializer2(request.user.profile2, context={'request': request, 'email': request.user.email, 'password': request.user.password})
         return Response(serializer.data)
-
-
-

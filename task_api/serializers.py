@@ -39,10 +39,14 @@ class ProfileSerializer2(serializers.ModelSerializer):
 
     def get_Favorite_movies(self, obj):
         favourites = Favourite.objects.filter(user=obj.user, favourite=True)
-        serializer = favouriteSerailizers(favourites, many=True)
+        serializer = favouriteSerailizers(favourites, many=True, context=self.context)
         return serializer.data
 class favouriteSerailizers(serializers.ModelSerializer):
-    movie = serializers.StringRelatedField()
+    movie = serializers.HyperlinkedRelatedField(
+        view_name='movie-detail',
+        read_only=True,
+        lookup_field='pk'
+    )
 
     class Meta:
         model = Favourite

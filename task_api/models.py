@@ -20,7 +20,7 @@ class Actors(models.Model):
 class Movie(models.Model):
     title=models.CharField(max_length=100)
     rated=models.DecimalField(max_digits=10,decimal_places=3)
-    duration2=models.IntegerField(default=0,verbose_name='duration')
+    duration2=models.IntegerField(default=0,verbose_name='duration',)
     description=models.TextField(blank=True,null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     poster=models.ImageField(upload_to='movies/poster/',blank=True,null=True)
