@@ -69,19 +69,6 @@ class ProfileView(APIView):
         serializer = ProfileSerializer2(request.user.profile2, context={'request': request, 'email': request.user.email, 'password': request.user.password})
         return Response(serializer.data)
     
-@api_view(['GET'])
-def download_movie(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    movie_path = movie.file.path
-    
-    if not os.path.exists(movie_path):
-        return Response({"error": "Movie file not found."}, status=status.HTTP_404_NOT_FOUND)
-    response = Response()
-    response['Content-Disposition'] = f'attachment; filename="{os.path.basename(movie_path)}"'
-    response['X-Sendfile'] = movie_path  
-    
-    return response
-
 
 
 def download_youtube_video(url):
@@ -93,19 +80,32 @@ def download_youtube_video(url):
 
 class MovieUploadAPIView(APIView):
     def post(self, request):
-        url = request.data.get('youtube_url')
-        video_path = download_youtube_video(url)
-
-        serializer = movieSerailizers(data={
-            'title': request.data.get('title'),
-            'rated':request.data.get('rated'),
-            'Duration':request.data.get('Duration'),
-
-            'media_file': video_path,
-        })
+        serializer = movieSerailizers(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
+            trailer_link = serializer.validated_data.get('trailer_link')
+            video_path = download_youtube_video(trailer_link)
 
-        return Response(serializer.errors, status=400)
+
+            serializer.save(media_file=video_path)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+def download_movie(request, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
+    movie_path = movie.file.path
+    if os.path.exists(movie_path):
+        response = FileResponse(open(movie_path, 'rb'), content_type='video/mp4')
+        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(movie_path)}"'
+        return response
+    trailer_link = movie.trailer_link
+    if not trailer_link:
+        return Response({"error": "Trailer link not found."}, status=status.HTTP_404_NOT_FOUND)
+    video_path = download_youtube_video(trailer_link)
+    movie.file = video_path
+    movie.save()
+    response = FileResponse(open(video_path, 'rb'), content_type='video/mp4')
+    response['Content-Disposition'] = f'attachment; filename="{os.path.basename(video_path)}"'
+    return response

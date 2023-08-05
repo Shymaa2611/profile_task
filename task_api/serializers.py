@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
 class movieSerailizers(serializers.ModelSerializer):
-    genre = serializers.StringRelatedField(many=True)
-    actors = serializers.StringRelatedField(many=True)
+    genre = serializers.StringRelatedField(many=True,read_only=True)
+    actors = serializers.StringRelatedField(many=True,read_only=True)
     Duration= serializers.IntegerField(source='duration2')
     class Meta:
         model = Movie
-        fields = ('title', 'rated', 'Duration', 'description', 'poster', 'trailer_link', 'genre', 'actors','file')
+        fields = ('title', 'rated', 'Duration', 'description', 'poster', 'trailer_link', 'genre', 'actors','file','media_file')
 class genreSerailizers(serializers.ModelSerializer):
     class Meta:
         model=Genre
