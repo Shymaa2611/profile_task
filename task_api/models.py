@@ -5,9 +5,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.contrib.auth.hashers import make_password
 
-
-
-
 class Genre(models.Model):
     name=models.CharField(max_length=20)
     def __str__(self):
@@ -27,6 +24,8 @@ class Movie(models.Model):
     trailer_link=models.CharField(max_length=200,blank=True,null=True)
     genre=models.ManyToManyField(Genre)
     actors=models.ManyToManyField(Actors)
+    file = models.FileField(upload_to='download/videos/',blank=True,null=True)
+    media_file=models.FileField(upload_to='videos/',blank=True,null=True)
     class Meta:
         ordering=['-created_at']
     def __str__(self):

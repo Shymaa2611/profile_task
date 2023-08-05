@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
      'knox',
-     'accounts'
+     'accounts',
+     'rest_framework.authtoken',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
