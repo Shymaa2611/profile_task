@@ -132,6 +132,11 @@ TEMPLATES=[
         },
     },
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 # Static files
 STATIC_ROOT = os.path.join(BASE_DIR, "static")

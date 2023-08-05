@@ -3,13 +3,13 @@ from .models import Movie,Actors,Genre,profile2,Favourite
 from .serializers import actorsSerailizers,favouriteSerailizers,genreSerailizers,movieSerailizers,ProfileSerializer2
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.decorators import action,api_view
+from rest_framework.decorators import action,api_view,permission_classes
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+
 import os
 from pytube import YouTube
 from django.conf import settings
@@ -20,9 +20,9 @@ from django.shortcuts import get_object_or_404
 class movieViewset(viewsets.ModelViewSet):
     serializer_class=movieSerailizers
     queryset=Movie.objects.all()
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
- 
+    #permission_classes=[IsAuthenticated]
+    #authentication_classes=[TokenAuthentication]
+    @permission_classes([IsAuthenticated])
     @action(methods=['POST'], detail=True)
     def movie_favourite(self, request, pk=None):
         if 'favourite' in request.data:
@@ -34,7 +34,7 @@ class movieViewset(viewsets.ModelViewSet):
                 favourite_obj = Favourite.objects.get(user=user, movie=movie.pk)
                 favourite_obj.favourite = favourite
                 favourite_obj.save()
-                serializer = favouriteSerailizers(favourite_obj, many=False)
+                serializer = favouriteSerailizers(favourite_obj, many=False, context={'request': request})
                 json = {
                 'message': 'Movie favourite is updated',
                 'result': serializer.data
@@ -43,7 +43,7 @@ class movieViewset(viewsets.ModelViewSet):
 
             except Favourite.DoesNotExist:
                 favourite_obj = Favourite.objects.create(favourite=favourite, movie=movie, user=user)
-                serializer = favouriteSerailizers(favourite_obj, many=False)
+                serializer = favouriteSerailizers(favourite_obj, many=False, context={'request': request})
                 json = {
                 'message': 'Successfully added',
                 'result': serializer.data
@@ -59,12 +59,12 @@ class movieViewset(viewsets.ModelViewSet):
 class movieViewset_pk(viewsets.ModelViewSet):
     queryset=Movie.objects.all()
     serializer_class=movieSerailizers
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    #permission_classes=[IsAuthenticated]
+    #authentication_classes=[TokenAuthentication]
     lookup_field='pk'
 class ProfileView(APIView):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+   # permission_classes=[IsAuthenticated]
+   # authentication_classes=[TokenAuthentication]
     def get(self, request):
         serializer = ProfileSerializer2(request.user.profile2, context={'request': request, 'email': request.user.email, 'password': request.user.password})
         return Response(serializer.data)
