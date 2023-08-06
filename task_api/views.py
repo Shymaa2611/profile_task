@@ -1,3 +1,4 @@
+from django.core.files import File
 from django.shortcuts import render
 from .models import Movie,Actors,Genre,profile2,Favourite
 from .serializers import actorsSerailizers,favouriteSerailizers,genreSerailizers,movieSerailizers,ProfileSerializer2
@@ -14,14 +15,14 @@ import os
 from pytube import YouTube
 from django.conf import settings
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 
 class movieViewset(viewsets.ModelViewSet):
     serializer_class=movieSerailizers
     queryset=Movie.objects.all()
     #permission_classes=[IsAuthenticated]
-    #authentication_classes=[TokenAuthentication]
+
     @permission_classes([IsAuthenticated])
     @action(methods=['POST'], detail=True)
     def movie_favourite(self, request, pk=None):
@@ -59,12 +60,10 @@ class movieViewset(viewsets.ModelViewSet):
 class movieViewset_pk(viewsets.ModelViewSet):
     queryset=Movie.objects.all()
     serializer_class=movieSerailizers
-    #permission_classes=[IsAuthenticated]
-    #authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     lookup_field='pk'
 class ProfileView(APIView):
-   # permission_classes=[IsAuthenticated]
-   # authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def get(self, request):
         serializer = ProfileSerializer2(request.user.profile2, context={'request': request, 'email': request.user.email, 'password': request.user.password})
         return Response(serializer.data)
@@ -93,19 +92,23 @@ class MovieUploadAPIView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-def download_movie(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    movie_path = movie.file.path
-    if os.path.exists(movie_path):
-        response = FileResponse(open(movie_path, 'rb'), content_type='video/mp4')
-        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(movie_path)}"'
+
+
+class MovieDownloadView(generics.RetrieveAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = movieSerailizers
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if not instance.file:
+            trailer_link = instance.trailer_link
+            video_path = download_youtube_video(trailer_link)
+            instance.file.save(f'{instance.title}.mp4', File(open(video_path, 'rb')))
+            instance.save()
+
+        file_path = instance.file.path
+
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename="{instance.title}.mp4"'
         return response
-    trailer_link = movie.trailer_link
-    if not trailer_link:
-        return Response({"error": "Trailer link not found."}, status=status.HTTP_404_NOT_FOUND)
-    video_path = download_youtube_video(trailer_link)
-    movie.file = video_path
-    movie.save()
-    response = FileResponse(open(video_path, 'rb'), content_type='video/mp4')
-    response['Content-Disposition'] = f'attachment; filename="{os.path.basename(video_path)}"'
-    return response

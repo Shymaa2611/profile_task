@@ -7,6 +7,7 @@ class movieSerailizers(serializers.ModelSerializer):
     genre = serializers.StringRelatedField(many=True,read_only=True)
     actors = serializers.StringRelatedField(many=True,read_only=True)
     Duration= serializers.IntegerField(source='duration2')
+    file = serializers.FileField(read_only=True)
     class Meta:
         model = Movie
         fields = ('title', 'rated', 'Duration', 'description', 'poster', 'trailer_link', 'genre', 'actors','file','media_file')
