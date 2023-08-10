@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-8o_3zj&dp)r6i_^k3=z=pz3ijfy-z_%mit514qn3vovie-c^i=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','MovieAPIData.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost','movieBackend.pythonanywhere.com']
 
 
 # Application definition
