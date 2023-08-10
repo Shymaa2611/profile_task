@@ -44,7 +44,6 @@ INSTALLED_APPS = [
      'knox',
      'accounts',
      'rest_framework.authtoken',
-     "drf_spectacular", 
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -145,12 +144,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-SPECTACULAR_SETTINGS = {
-"TITLE": "MOVIE API Project",
-#"DESCRIPTION": "A sample blog to learn about DRF",
-"VERSION": "1.0.0",
-# OTHER SETTINGS
-}
+
 
 
 # Static files
