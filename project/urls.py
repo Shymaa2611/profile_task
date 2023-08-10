@@ -10,6 +10,7 @@ urlpatterns = [
     path('',include('task_api.urls')),
     path('users/',include('accounts.urls')),
     path('api/token/', obtain_auth_token, name='api-token'),
+    #path("api-auth/", include("rest_framework.urls"))
 ]
 # Media setting #
 if settings.DEBUG is True:

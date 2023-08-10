@@ -63,7 +63,7 @@ class movieViewset_pk(viewsets.ModelViewSet):
     permission_classes=[IsAuthenticated]
     lookup_field='pk'
 class ProfileView(APIView):
-    permission_classes=[IsAuthenticated]
+    #permission_classes=[IsAuthenticated]
     def get(self, request):
         serializer = ProfileSerializer2(request.user.profile2, context={'request': request, 'email': request.user.email, 'password': request.user.password})
         return Response(serializer.data)
