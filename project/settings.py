@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8o_3zj&dp)r6i_^k3=z=pz3ijfy-z_%mit514qn3vovie-c^i='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','MovieAPIData.pythonanywhere.com']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
      'knox',
      'accounts',
      'rest_framework.authtoken',
+     "drf_spectacular", 
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -141,6 +142,14 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication", 
 ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+"TITLE": "MOVIE API Project",
+#"DESCRIPTION": "A sample blog to learn about DRF",
+"VERSION": "1.0.0",
+# OTHER SETTINGS
 }
 
 

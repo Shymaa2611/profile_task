@@ -3,6 +3,7 @@ from .models import Favourite,Genre,Actors,profile2,Movie
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
+
 class movieSerailizers(serializers.ModelSerializer):
     genre = serializers.StringRelatedField(many=True,read_only=True)
     actors = serializers.StringRelatedField(many=True,read_only=True)
@@ -10,7 +11,7 @@ class movieSerailizers(serializers.ModelSerializer):
     file = serializers.FileField(read_only=True)
     class Meta:
         model = Movie
-        fields = ('title', 'rated', 'Duration', 'description', 'poster', 'trailer_link', 'genre', 'actors','file','media_file')
+        fields = ('id','title', 'rated', 'Duration', 'description', 'poster', 'trailer_link', 'genre', 'actors','file','media_file')
 class genreSerailizers(serializers.ModelSerializer):
     class Meta:
         model=Genre
